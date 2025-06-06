@@ -1,17 +1,14 @@
 import { createClient } from '@supabase/supabase-js';
 import { Connection, PublicKey } from '@solana/web3.js';
 
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_KEY
-);
-
-const HELIUS_API_KEY = process.env.HELIUS_API_KEY;
-const RPC_URL = `https://rpc.helius.xyz/?api-key=${HELIUS_API_KEY}`;
-
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
   
+  console.log('Environment variables:', {
+    SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL ? "Set" : "Missing",
+    HELIUS_API_KEY: process.env.HELIUS_API_KEY ? "Set" : "Missing"
+  });
+
   const { tokenAddress } = req.body;
   
   try {
@@ -20,29 +17,31 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Invalid token address" });
     }
     
-    // Fetch token data
-    const tokenData = {
-      token_address: tokenAddress,
-      market_cap: Math.random() * 1000000,
-      price: Math.random() * 0.01,
-      volume_5m: Math.random() * 1000,
-      volume_15m: Math.random() * 3000,
-      volume_30m: Math.random() * 6000,
-      holders: Math.floor(Math.random() * 1000),
-      multi_tx_wallets: [{ wallet: "A1v2...z9x8", count: 3 }],
-      bundled_wallets: [{ wallet: "B2c3...y8w7", count: 5 }],
-      created_at: new Date().toISOString()
-    };
+    // Verify Supabase connection
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    );
     
-    // Save to Supabase
-    const { data, error } = await supabase
+    // Test Supabase connection
+    const { error: supabaseError } = await supabase
       .from('token_snapshots')
-      .insert([tokenData]);
+      .select('*')
+      .limit(1);
     
-    if (error) throw error;
-    res.status(200).json(data[0]);
+    if (supabaseError) throw new Error(`Supabase error: ${supabaseError.message}`);
+    
+    // Test Solana connection
+    try {
+      const publicKey = new PublicKey(tokenAddress);
+      console.log('Public key created successfully');
+    } catch (e) {
+      throw new Error(`Invalid Solana address: ${e.message}`);
+    }
+    
+    // ... rest of your code
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to process token" });
+    console.error('API Error:', error.message);
+    res.status(500).json({ error: error.message });
   }
 }
