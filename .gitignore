@@ -1,15 +1,16 @@
-# dependencies
+# Dependencies
 /node_modules
 
-# next.js
+# Next.js
 /.next
 
-# misc
-.DS_Store
+# Environment variables
 .env*.local
+
+# Vercel
 .vercel
 
-# debug
+# Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
