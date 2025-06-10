@@ -27,7 +27,9 @@ export default async function handler(req, res) {
     const initialData = {
       marketCap: Math.random() * 1000000,
       price: Math.random() * 0.01,
-      volume: Math.random() * 10000,
+      volume_5m: Math.random() * 1000,
+      volume_15m: Math.random() * 3000,
+      volume_30m: Math.random() * 6000,
       holders: Math.floor(Math.random() * 1000),
       timestamp: now.toISOString()
     };

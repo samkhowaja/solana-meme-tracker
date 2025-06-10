@@ -1,0 +1,17 @@
+===========================================
+🚀 IMPORTANT: SET UP AUTOMATIC UPDATES 🚀
+===========================================
+
+To enable automatic data collection at 15m, 30m, and 1hr intervals:
+
+1. Go to https://cron-job.org and create a free account
+2. Create a new cron job with these settings:
+   - URL: https://YOUR_VERCEL_APP.vercel.app/api/tokens/update
+   - Schedule: Every 5 minutes (*/5 * * * *)
+   - Enabled: Yes
+
+3. Save the cron job
+
+Your Solana meme coin tracker will now automatically collect data at the specified intervals!
+
+Note: Replace YOUR_VERCEL_APP with your actual Vercel app name.
